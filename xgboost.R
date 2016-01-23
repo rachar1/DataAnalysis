@@ -1,0 +1,98 @@
+# Date: Jan 22, 2015
+# xgboost.R
+# This is an example of xgboost model using the Boston Housing data available in the MASS package.
+# To run this code, you need to have MASS and xgboost packages installed. You do not have to load any other data.
+
+# This exercise is used to predict the median home value for the Boston houses using xgboost.
+# The data contains numeric predictors. Our target column is medv (Median value).
+ 
+# Note: This uses a two step process.
+# Step 1 performs cross-validation to find the number of iterations needed to get the minimum RMSE.
+# Step 2 creates the final model using the nround identified in Step 1, and makes the prediction. 
+
+# Load the required libraries.
+library(xgboost)
+library(MASS)
+
+data(Boston)
+print(str(Boston))
+ 
+#Split the data into training (70%) and testing(30%).
+
+set.seed(100)
+ind=sample(nrow(Boston),nrow(Boston)* 0.7)
+training=Boston[ind,]
+testing=Boston[-ind,]
+
+#method = xgboost with cv
+
+#Set the parameters for xgboost.
+#Note: This is a regression problem, and the evaluation metric is "rmse".
+#      The same parameters are used by Step 1 and Step 2.
+#      You can try different values and find if it changes the RMSE.
+
+param <- list("objective" = "reg:linear",    # linear regression 
+              "eval_metric" = "rmse",    	 # evaluation metric 
+              "nthread" = 8,   				 # number of threads to be used 
+              "max_depth" = 16,    			 # maximum depth of tree 
+              "eta" = 0.3,    				 # step size shrinkage 
+              "gamma" = 0,    				 # minimum loss reduction 
+              "subsample" = 0.7,    			 # part of data instances to grow tree 
+              "colsample_bytree" = 1, 		 # subsample ratio of columns when constructing each tree 
+              "min_child_weight" = 12  		 # minimum sum of instance weight needed in a child 
+              )
+
+#Identify the Predictors and the dependent variable, to be used by xgboost.
+ 
+predictors=colnames(training[-ncol(training)])
+label=training[,ncol(training)]
+		  
+##########################################################################
+
+# Step 1: Run a Cross-Validation to identify the round with the minimum rmse.
+#         Note: xgboost expects the data in the form of a numeric matrix.
+
+set.seed(100)
+
+cv.nround = 200;  # This can be set to a higher value, if you wish, example: 250 or 300  
+bst.cv = xgb.cv(
+                param=param,
+				        data = as.matrix(training[,predictors]),
+				        label = label,
+				        nfold = 3,
+				        nrounds=cv.nround,
+				        prediction=T)
+
+#Find where the minimum rmse occurred
+
+min.rmse.idx = which.min(bst.cv$dt[, test.rmse.mean]) 
+cat ("Minimum RMSE occurred in round : ", min.rmse.idx, "\n")
+
+# Minimum RMSE
+print(bst.cv$dt[min.rmse.idx,])
+
+###########################################################################
+# Step 2: Train the xgboost model using min.rmse.idx found above
+
+set.seed(100)
+
+bst = xgboost(
+				      param=param,
+				      data =as.matrix(training[,predictors]),
+				      label = label,
+				      nrounds=min.rmse.idx)
+
+# Make prediction on the testing data, and calculate RMSE
+
+testing$prediction = predict(bst, as.matrix(testing[,predictors]))
+RMSE= sqrt(mean((testing$medv - testing$prediction)^2))
+cat("Test RMSE : ", RMSE, "\n")
+
+# Print a few values from the testing data.
+print(testing[1:15,c("medv","prediction")])
+
+cat("      ****** End of Run \n")
+
+## Note:  If you run this exact code, you will get the RMSE value 3.419
+## You might want to run other models: lm, randomForest, etc., and compare the RMSE obtained.
+ 
