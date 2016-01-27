@@ -32,12 +32,12 @@ testing=iris[-ind,]
 #      You can try different values for nthread, max_depth, eta, gamma, etc., and see if you get lower prediction error.
 
 param       = list("objective" = "multi:softmax", # multi class classification
-			        "num_class"= 3 ,				 # Number of classes in the dependent variable.
+			        "num_class"= 3 ,  # Number of classes in the dependent variable.
               "eval_metric" = "mlogloss",  	 # evaluation metric 
-              "nthread" = 8,   				 # number of threads to be used 
-              "max_depth" = 16,    			 # maximum depth of tree 
-              "eta" = 0.3,    				 # step size shrinkage 
-              "gamma" = 0,    				 # minimum loss reduction 
+              "nthread" = 8,   			 # number of threads to be used 
+              "max_depth" = 16,    		 # maximum depth of tree 
+              "eta" = 0.3,    			 # step size shrinkage 
+              "gamma" = 0,    			 # minimum loss reduction 
               "subsample" = 0.7,    		 # part of data instances to grow tree 
               "colsample_bytree" = 1, 		 # subsample ratio of columns when constructing each tree 
               "min_child_weight" = 12  		 # minimum sum of instance weight needed in a child 
@@ -62,11 +62,11 @@ set.seed(100)
 cv.nround = 200;  # Number of rounds. This can be set to a lower or higher value, if you wish, example: 150 or 250 or 300  
 bst.cv = xgb.cv(
         param=param,
-				data = as.matrix(training[,predictors]),
-				label = label,
-				nfold = 3,
-				nrounds=cv.nround,
-				prediction=T)
+	data = as.matrix(training[,predictors]),
+	label = label,
+	nfold = 3,
+	nrounds=cv.nround,
+	prediction=T)
 
 #Find where the minimum logloss occurred
 min.loss.idx = which.min(bst.cv$dt[, test.mlogloss.mean]) 
@@ -81,10 +81,10 @@ print(bst.cv$dt[min.loss.idx,])
 set.seed(100)
 
 bst = xgboost(
-			  param=param,
-			  data =as.matrix(training[,predictors]),
-			  label = label,
-			  nrounds=min.loss.idx)
+		param=param,
+		data =as.matrix(training[,predictors]),
+		label = label,
+		nrounds=min.loss.idx)
 
 # Make prediction on the testing data.
 testing$prediction = predict(bst, as.matrix(testing[,predictors]))
