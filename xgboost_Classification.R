@@ -22,9 +22,9 @@ print(str(iris))
  
 #Split the iris data into training (70%) and testing(30%).
 set.seed(100)
-ind=sample(nrow(iris),nrow(iris)* 0.7)
-training=iris[ind,]
-testing=iris[-ind,]
+ind = sample(nrow(iris),nrow(iris)* 0.7)
+training = iris[ind,]
+testing = iris[-ind,]
 
 #Set the parameters for cross-validation and xgboost.
 #Note: This is a multi-class classification problem, and the evaluation metric is "mlogloss".
@@ -44,13 +44,13 @@ param       = list("objective" = "multi:softmax", # multi class classification
               )
 
 #Identify the Predictors and the dependent variable.
-predictors=colnames(training[-ncol(training)])
+predictors = colnames(training[-ncol(training)])
 #xgboost works only if the labels are numeric. Hence, convert the labels (Species) to numeric.
-label=as.numeric(training[,ncol(training)])
+label = as.numeric(training[,ncol(training)])
 print(table (label))
 
 #Alas, xgboost works only if the numeric labels start from 0. Hence, subtract 1 from the label.
-label=as.numeric(training[,ncol(training)])-1
+label = as.numeric(training[,ncol(training)])-1
 print(table (label))
 		  
 #########################################################################################################
