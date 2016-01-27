@@ -15,7 +15,7 @@
 
 # Load the required libraries.
 library(xgboost)
-library(caret)      # for confusionMtrix
+library(caret)      # for confusionMatrix
 
 #Check the data structure
 data(iris)
@@ -44,7 +44,7 @@ param       = list("objective" = "multi:softmax", # multi class classification
               "min_child_weight" = 12  		 # minimum sum of instance weight needed in a child 
               )
 
-#Identify the Predictors and the dependent variable.
+#Identify the Predictors and the dependent variable, aka label.
 predictors = colnames(training[-ncol(training)])
 #xgboost works only if the labels are numeric. Hence, convert the labels (Species) to numeric.
 label = as.numeric(training[,ncol(training)])
