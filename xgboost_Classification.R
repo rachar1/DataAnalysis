@@ -1,7 +1,7 @@
 # Date: Jan 2016
 # xgboost_Classification.R
 # This is an example of xgboost model using the iris data available in base R.
-# To run this code, you need to have the xgboost package installed. You do not have to load any other data.
+# To run this code, you need to have the xgboost package installed. You do not have to read in any data files..
 
 # Predict the Species from the 4 features of iris data.
 # The data contains numeric predictors. Our target column is Species, with 3 classes.
