@@ -11,9 +11,7 @@
 # Step 2 creates the final model using the nround identified in Step 1, and makes the prediction. 
 # 
 # Also note that I have skipped a few pre-modeling steps:
-# 														- Data Exploration
-# 														- Handling Outliers
-# 														- Handling/Imputing Null predictors
+#                                   Data Exploration, Handling Outliers, Handling/Imputing Null predictors
 
 # Load the required libraries.
 library(xgboost)
