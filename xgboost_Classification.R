@@ -99,7 +99,6 @@ confusionMatrix( testing$prediction,testing$Species)
 #Extra: Use some other model for the same prediction.
 #       (randomForest with cross-validation using the caret package)
 
-library(caret) 
 set.seed(100)
 train_control = trainControl(method="cv",number=10)
 model.rf = train(Species~., data=training, trControl=train_control, method="rf")
