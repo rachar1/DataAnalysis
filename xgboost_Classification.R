@@ -70,11 +70,11 @@ bst.cv = xgb.cv(
 	prediction=T)
 
 #Find where the minimum logloss occurred
-min.loss.idx = which.min(bst.cv$dt[, test.mlogloss.mean]) 
+min.loss.idx = which.min(bst.cv$evaluation_log[, test_mlogloss_mean]) 
 cat ("Minimum logloss occurred in round : ", min.loss.idx, "\n")
 
 # Minimum logloss
-print(bst.cv$dt[min.loss.idx,])
+print(bst.cv$evaluation_log[min.loss.idx,])
 
 ##############################################################################################################################
 # Step 2: Train the xgboost model using min.loss.idx found above.
@@ -92,6 +92,7 @@ testing$prediction = predict(bst, as.matrix(testing[,predictors]))
 
 #Translate the prediction to the original class or Species.
 testing$prediction = ifelse(testing$prediction==0,"setosa",ifelse(testing$prediction==1,"versicolor","virginica"))
+testing$prediction = factor(testing$prediction)
 
 #Compute the accuracy of predictions.
 confusionMatrix( testing$prediction,testing$Species)
